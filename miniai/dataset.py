@@ -5,7 +5,7 @@ from torch.utils.data import default_collate
 from operator import itemgetter
 import math,numpy as np,matplotlib.pyplot as plt
 from itertools import zip_longest
-import factcore.all as fc
+import fastcore.all as fc
 
 def transforms(b, x='image'):
     b[x] = [TF.to_tensor(o) for o in b[x]]
@@ -95,4 +95,4 @@ class DataLoaders:
      
      
 
-__all__ = ['collate_dict', 'default_collate', 'get', 'transforms', 'inplace', 'itemgetter']
+__all__ = ['collate_dict', 'default_collate', 'transforms', 'inplace', 'itemgetter']
