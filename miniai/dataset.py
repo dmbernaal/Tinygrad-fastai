@@ -6,6 +6,7 @@ from operator import itemgetter
 import math,numpy as np,matplotlib.pyplot as plt
 from itertools import zip_longest
 import fastcore.all as fc
+from torch.utils.data import DataLoader
 
 def transforms(b, x='image'):
     b[x] = [TF.to_tensor(o) for o in b[x]]
@@ -92,7 +93,17 @@ class DataLoaders:
     def from_dd(cls, dd, batch_size, as_tuple=True, **kwargs):
         f = collate_dict(dd['train'])
         return cls(*get_dls(*dd.values(), bs=batch_size, collate_fn=f, **kwargs))
-     
-     
 
-__all__ = ['collate_dict', 'default_collate', 'transforms', 'inplace', 'itemgetter']
+class DS:
+    def __init__(self, x, y):
+        self.x = x.view(-1, 28*28).float()/255.
+        self.y = y[:, None].long().view(-1)
+    def __len__(self):
+        return len(self.x)
+    def __getitem__(self, i):
+        return self.x[i], self.y[i]
+
+def to_ds(hf_ds): return DS(hf_ds['image'], hf_ds['label'])
+def to_dls(train_ds, valid_ds, bs, **kwargs):
+    return (DataLoader(train_ds, batch_size=bs, shuffle=True, **kwargs),
+            DataLoader(valid_ds, batch_size=bs*2, **kwargs))
